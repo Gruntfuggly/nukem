@@ -1,6 +1,43 @@
 var enabled = false;
 
-var box = $( "<div class='outer' />" ).css(
+function getDomPath(el)
+{
+    var stack = [];
+    while (el.parentNode !== null)
+    {
+        var sibCount = 0;
+        var sibIndex = 0;
+        for (var i = 0; i < el.parentNode.childNodes.length; i++)
+        {
+            var sib = el.parentNode.childNodes[i];
+            if (sib.nodeName == el.nodeName)
+            {
+                if (sib === el)
+                {
+                    sibIndex = sibCount;
+                }
+                sibCount++;
+            }
+        }
+        if (el.hasAttribute('id') && el.id !== '')
+        {
+            stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
+        }
+        else if (sibCount > 1)
+        {
+            stack.unshift(el.nodeName.toLowerCase() + ':eq(' + sibIndex + ')');
+        }
+        else
+        {
+            stack.unshift(el.nodeName.toLowerCase());
+        }
+        el = el.parentNode;
+    }
+
+    return stack.slice(1); // removes the html element
+}
+
+var box = $("<div class='outer' />").css(
 {
     display: "none",
     position: "absolute",
@@ -54,10 +91,16 @@ function toggleEnabled()
             mouseY = e.clientY;
             target = e.target;
         } );
+        $("body").on("click.nukem", function(e)
+        {
+            var path = getDomPath(target).join(" > ");
+            $(path).remove();
+        });
     }
     else
     {
         $( "body" ).off( "mousemove.nukem" );
+        $("body").off("click.nukem");
         target = undefined;
     }
 }
