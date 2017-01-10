@@ -85,7 +85,7 @@ function getElements( url )
     {
         if ( pageMatches( url, entry.url ) )
         {
-            selectors.push( entry.selector );
+            selectors.push( entry );
         }
     } );
 
@@ -113,7 +113,7 @@ chrome.extension.onRequest.addListener(
         {
             sendResponse(
             {
-                selectors: getElements( request.url )
+                elements: getElements( request.url )
             } );
         }
         else
