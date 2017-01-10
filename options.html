@@ -1,0 +1,54 @@
+<html>
+
+<head>
+    <title>Nukem: Options</title>
+    <link rel="stylesheet" type="text/css" href="options.css">
+</head>
+
+<body>
+    <div class="navigate">
+        <h1><img src="icons/nukem-48.png" style="margin-bottom: -2px; margin-right: 3px;height: 1em">Nukem</h1>
+    </div>
+
+    <div class="options">
+        <div class="section">
+            <div id="content">
+                <div id="options">
+                    <h1>Patterns</h1>
+
+                    <div id="urls" class="listContainer">
+                    </div>
+
+                    <table width="100%" style="padding-top:0.8em">
+                        <tr>
+                            <td nowrap id="saved">
+                            </td>
+                            <td align="right">
+                                <button id="add-button">Add</button>
+                                <button id="save-button">Save</button>
+                                <button id="close-button">Close</button>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div id="help">
+                        <h3>Domain Names</h3>
+                        <p>The domain name is matched first and the pattern is applied to the rest of the URL. Wildcards can also be used in the domain to match multiple domains or subdomains, eg. <input class="pattern" type="text" readonly value="*.google.*"
+                                size="10"> will match <em>groups.google.com</em> and <em>maps.google.co.uk</em>.</p>
+
+                        <h3>Help with patterns</h3>
+                        <p>The default pattern <input class="pattern" type="text" readonly value="/.+" size="3"> matches URLs that are pages within the website but not the main page of the website. If you want to match particular pages you can modify the
+                            pattern. For example, the pattern <input class="pattern" type="text" readonly value=".+[^#]$" size="7">will only match pages with do not end with a <strong>#</strong>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="background"></div>
+
+    <script type="text/javascript" src="jquery-3.1.1.slim.min.js"></script>
+    <script type="text/javascript" src="options.js"></script>
+
+</body>
+
+</html>

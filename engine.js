@@ -94,6 +94,14 @@ function toggleEnabled()
         $("body").on("click.nukem", function(e)
         {
             var path = getDomPath(target).join(" > ");
+            chrome.extension.sendRequest(
+                {
+                    method: "remove",
+                    path: path,
+                    url: window.location.href
+                },
+                function(response) {}
+            );
             $(path).remove();
         });
     }
@@ -101,7 +109,15 @@ function toggleEnabled()
     {
         $( "body" ).off( "mousemove.nukem" );
         $("body").off("click.nukem");
+
         target = undefined;
+
+        chrome.extension.sendRequest(
+            {
+                method: "options",
+            },
+            function(response) {}
+        );
     }
 }
 

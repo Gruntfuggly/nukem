@@ -36,14 +36,60 @@ function toggleEnabled()
     );
 }
 
+function openOptions()
+{
+    chrome.tabs.create(
+    {
+        'url': chrome.extension.getURL( 'options.html' )
+    }, function( tab )
+    {
+        // Tab opened.
+    } );
+}
+
+function addSite( domain, elementPath )
+{
+    window.localStorage.setItem( domain, elementPath );
+}
+
+function getElements( url )
+{
+    var paths = [];
+
+    for ( var i = 0; i < window.localStorage.length; i++ )
+    {
+        if ( url === window.localStorage.key( i ) )
+        {
+            paths.push( window.localStorage.getItem( window.localStorage.key( i ) ) );
+        }
+    }
+
+    return paths;
+}
+
 chrome.browserAction.onClicked.addListener( toggleEnabled );
 
 chrome.extension.onRequest.addListener(
     function( request, sender, sendResponse )
     {
-        if ( request.method == "reset" )
+        if ( request.method === "reset" )
         {
             setIcon( false );
+        }
+        else if ( request.method === "remove" )
+        {
+            addSite( request.url, request.path );
+        }
+        else if ( request.method === "options" )
+        {
+            openOptions();
+        }
+        else if ( request.method === "getElements" )
+        {
+            sendResponse(
+            {
+                paths: getElements( request.url )
+            } );
         }
         else
         {
