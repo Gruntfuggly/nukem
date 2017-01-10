@@ -1,31 +1,36 @@
 var checked = false;
 
-function setIcon( cell, domain )
+function setIcon( cell, url )
 {
-    cell.setAttribute( 'style', 'background-image: url(\'chrome://favicon/http://' + domain + '/\');' );
+    if ( url.indexOf( "*" ) !== -1 )
+    {
+        url = url.match( /^([\w-]+:\/*\[?[\w\.:-]+)\]?(?::\d+)?/ )[ 1 ] + "/";
+    }
+    console.log( url );
+    cell.setAttribute( 'style', 'background-image: url(\'chrome://favicon/' + url + '\');' );
 }
 
-function addRow( domain, pattern )
+function addRow( url, selector )
 {
     var table = document.getElementById( 'urlsTable' );
 
     var rowCount = table.rows.length;
     var row = table.insertRow( rowCount );
 
-    var domainCell = row.insertCell( 0 );
-    domainCell.className = "domain";
+    var urlCell = row.insertCell( 0 );
+    urlCell.className = "domain";
     var domainField = document.createElement( "input" );
     domainField.type = "text";
-    domainField.value = domain;
+    domainField.value = url;
     domainField.setAttribute( 'onblur', 'refreshIcon( this )' );
-    domainCell.appendChild( domainField );
+    urlCell.appendChild( domainField );
 
-    var patternCell = row.insertCell( 1 );
-    patternCell.className = "pattern";
-    var patternField = document.createElement( "input" );
-    patternField.type = "text";
-    patternField.value = pattern;
-    patternCell.appendChild( patternField );
+    var selectorCell = row.insertCell( 1 );
+    selectorCell.className = "pattern";
+    var selectorField = document.createElement( "input" );
+    selectorField.type = "text";
+    selectorField.value = selector;
+    selectorCell.appendChild( selectorField );
 
     var delayCell = row.insertCell( 2 );
     delayCell.className = "delay";
@@ -44,9 +49,9 @@ function addRow( domain, pattern )
         deleteRow( this )
     } );
 
-    setIcon( domainCell, domain );
+    setIcon( urlCell, url );
 
-    if ( domain === "" )
+    if ( url === "" )
     {
         domainField.focus();
     }
@@ -82,141 +87,88 @@ function loadURLs()
     row.innerHTML += "<th width='10%'>Delay (ms)</th>";
     row.innerHTML += "<th width='1%'></th>";
 
-    if ( window.localStorage.length === 0 )
+    var settingsData = window.localStorage.getItem( "settings" );
+    var settings = settingsData ? JSON.parse( settingsData ) : [];
+
+    if ( settings.length === 0 )
     {
         addRow( '', '' );
     }
     else
     {
-        for ( var i = 0; i < window.localStorage.length; i++ )
+        settings.map( function( entry )
         {
-            var value = window.localStorage.key( i );
-
-            if ( value.substr( 0, 1 ) != '-' )
-            {
-                var pattern = window.localStorage.getItem( value );
-                var domain = value;
-
-                // Backwards compatibility with 0.7
-                if ( value.substr( -3 ) == '/.+' )
-                {
-                    domain = value.substr( 0, value.indexOf( '/' ) );
-                    pattern = value.substr( value.indexOf( '/' ) );
-                }
-
-                addRow( domain, pattern );
-            }
-        }
+            addRow( entry.url, entry.selector );
+        } );
     }
 }
 
-function checkForChanges()
+function serialize()
 {
-    var table = document.getElementById( 'urlsTable' );
-    var rows = table.getElementsByTagName( 'tr' );
+    var urlsTable = document.getElementById( 'urlsTable' );
 
-    for ( var i = 0; i < window.localStorage.length; i++ )
+    var settings = [];
+
+    for ( var row = 1; row < urlsTable.rows.length; row++ )
     {
-        var domain = window.localStorage.key( i );
-
-        if ( domain.substr( 0, 1 ) != '-' )
+        var url = urlsTable.rows[ row ].cells[ 0 ].getElementsByTagName( 'input' )[ 0 ].value;
+        var selector = urlsTable.rows[ row ].cells[ 1 ].getElementsByTagName( 'input' )[ 0 ].value;
+        var delay = urlsTable.rows[ row ].cells[ 2 ].getElementsByTagName( 'input' )[ 0 ].value;
+        if ( url.trim() !== '' )
         {
-            var pattern = window.localStorage.getItem( domain );
-
-            var found = false;
-
-            for ( var row = 0; row < rows.length; row++ )
+            settings.push(
             {
-                var fields = rows[ row ].getElementsByTagName( 'input' );
-                if ( fields.length > 1 && fields[ 0 ].value == domain && fields[ 1 ].value == pattern )
-                {
-                    found = true;
-                }
-            }
-
-            if ( found == false )
-            {
-                return true;
-            }
+                url: url,
+                selector: selector,
+                delay: parseInt( delay )
+            } );
         }
     }
 
-    return false;
+    return JSON.stringify( settings );
 }
 
-function twoDigit( number )
+function settingsChanged()
 {
-    return number < 10 ? "0" + number : number;
-}
-
-function now()
-{
-    var now = new Date();
-
-    return twoDigit( now.getHours() ) + ":" + twoDigit( now.getMinutes() ) + ":" + twoDigit( now.getSeconds() );
+    return window.localStorage.getItem( "settings" ) !== serialize();
 }
 
 function save()
 {
-    window.localStorage.clear();
-
-    var urlsTable = document.getElementById( 'urlsTable' );
-
-    for ( var row = 1; row < urlsTable.rows.length; row++ )
+    function now()
     {
-        var domain = urlsTable.rows[ row ].cells[ 0 ].getElementsByTagName( 'input' )[ 0 ].value;
-        var pattern = urlsTable.rows[ row ].cells[ 1 ].getElementsByTagName( 'input' )[ 0 ].value;
-
-        if ( domain != '' )
+        function twoDigit( number )
         {
-            window.localStorage.setItem( domain, pattern );
+            return number < 10 ? "0" + number : number;
         }
+
+        var now = new Date();
+        return twoDigit( now.getHours() ) + ":" + twoDigit( now.getMinutes() ) + ":" + twoDigit( now.getSeconds() );
     }
+
+    window.localStorage.clear();
+    window.localStorage.setItem( "settings", serialize() );
 
     document.getElementById( 'saved' ).innerHTML = "<em><small>Last saved: " + now() + "</small></em>";
 }
 
-function canClose()
-{
-    if ( checked === false && checkForChanges() === true )
-    {
-        return confirm( "Close without saving?" );
-    }
-    return true;
-}
-
 function cancel()
 {
-    if ( canClose() )
-    {
-        checked = true;
-        chrome.tabs.getSelected(
-            null,
-            function( tab )
-            {
-                chrome.tabs.remove( tab.id );
-            }
-        );
-    }
+    chrome.tabs.getSelected(
+        null,
+        function( tab )
+        {
+            chrome.tabs.remove( tab.id );
+        }
+    );
 }
 
 function closePage()
 {
-    if ( checkForChanges() )
-    {
-        return "You have not saved your changes.";
-    }
+    return settingsChanged() ? true : null;
 }
 
 window.onbeforeunload = closePage;
-
-$( document ).ready(
-    function()
-    {
-        $( "#help tr:even" ).css( "background-color", "#eee" );
-        $( "#help tr:odd" ).css( "background-color", "#ddd" );
-    }
-);
 
 document.addEventListener( 'DOMContentLoaded', function()
 {
