@@ -1,0 +1,41 @@
+{
+    "manifest_version": 2,
+    "name": "Nukem",
+    "description": "",
+    "version": "1.0",
+    "author": "Gruntfuggly",
+    "permissions": [
+        "activeTab"
+    ],
+    "icons":
+    {
+        "16": "icons/nukem-16.png",
+        "48": "icons/nukem-48.png",
+        "128": "icons/nukem-128.png"
+    },
+    "background":
+    {
+        "scripts": [ "background.js" ]
+    },
+    "browser_action":
+    {
+        "default_icon": "icons/nukem-19-disabled.png",
+        "default_title": "Enable Nukem"
+    },
+    "content_scripts": [
+    {
+        "matches": [ "*://*/*" ],
+        "js": [
+            "jquery-3.1.1.slim.min.js",
+            "engine.js"
+        ]
+    },
+    {
+        "matches": [ "*://*/*" ],
+        "js": [
+            "jquery-3.1.1.slim.min.js",
+            "nukem.js"
+        ],
+        "run_at": "document_end"
+    } ]
+}
