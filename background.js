@@ -12,7 +12,7 @@ function setIcon( enabled )
     } );
     chrome.browserAction.setTitle(
     {
-        title: ( enabled % 2 != 0 ? "Disable" : "Enable" ) + " Nukem"
+        title: ( enabled % 2 != 0 ? "Stop" : "Start" ) + " nuking..."
     } );
 }
 
@@ -47,24 +47,49 @@ function openOptions()
     } );
 }
 
-function addSite( domain, elementPath )
+function addSite( url, selector )
 {
-    window.localStorage.setItem( domain, elementPath );
+    var settingsData = window.localStorage.getItem( "settings" );
+    var settings = settingsData ? JSON.parse( settingsData ) : [];
+
+    settings.push(
+    {
+        url: url,
+        selector: selector,
+        delay: 0
+    } );
+    window.localStorage.setItem( "settings", JSON.stringify( settings ) );
+}
+
+function pageMatches( url, value )
+{
+    var pattern = "^" + value;
+    pattern = pattern.replace( /\//g, "\\/" );
+    pattern = pattern.replace( /\?/g, "\\?" );
+    pattern = pattern.replace( /\./g, "\\." );
+    pattern = pattern.replace( /\*/g, ".+" );
+    var regex = new RegExp( pattern );
+    var matched = url.search( regex ) != -1;
+
+    return matched;
 }
 
 function getElements( url )
 {
-    var paths = [];
+    var selectors = [];
 
-    for ( var i = 0; i < window.localStorage.length; i++ )
+    var settingsData = window.localStorage.getItem( "settings" );
+    var settings = settingsData ? JSON.parse( settingsData ) : [];
+
+    settings.map( function( entry )
     {
-        if ( url === window.localStorage.key( i ) )
+        if ( pageMatches( url, entry.url ) )
         {
-            paths.push( window.localStorage.getItem( window.localStorage.key( i ) ) );
+            selectors.push( entry.selector );
         }
-    }
+    } );
 
-    return paths;
+    return selectors;
 }
 
 chrome.browserAction.onClicked.addListener( toggleEnabled );
@@ -78,7 +103,7 @@ chrome.extension.onRequest.addListener(
         }
         else if ( request.method === "remove" )
         {
-            addSite( request.url, request.path );
+            addSite( request.url, request.selector );
         }
         else if ( request.method === "options" )
         {
@@ -88,7 +113,7 @@ chrome.extension.onRequest.addListener(
         {
             sendResponse(
             {
-                paths: getElements( request.url )
+                selectors: getElements( request.url )
             } );
         }
         else

@@ -1,43 +1,43 @@
 var enabled = false;
 
-function getDomPath(el)
+function getDomPath( el )
 {
     var stack = [];
-    while (el.parentNode !== null)
+    while ( el.parentNode !== null )
     {
         var sibCount = 0;
         var sibIndex = 0;
-        for (var i = 0; i < el.parentNode.childNodes.length; i++)
+        for ( var i = 0; i < el.parentNode.childNodes.length; i++ )
         {
-            var sib = el.parentNode.childNodes[i];
-            if (sib.nodeName == el.nodeName)
+            var sib = el.parentNode.childNodes[ i ];
+            if ( sib.nodeName == el.nodeName )
             {
-                if (sib === el)
+                if ( sib === el )
                 {
                     sibIndex = sibCount;
                 }
                 sibCount++;
             }
         }
-        if (el.hasAttribute('id') && el.id !== '')
+        if ( el.hasAttribute( 'id' ) && el.id !== '' )
         {
-            stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
+            stack.unshift( el.nodeName.toLowerCase() + '#' + el.id );
         }
-        else if (sibCount > 1)
+        else if ( sibCount > 1 )
         {
-            stack.unshift(el.nodeName.toLowerCase() + ':eq(' + sibIndex + ')');
+            stack.unshift( el.nodeName.toLowerCase() + ':eq(' + sibIndex + ')' );
         }
         else
         {
-            stack.unshift(el.nodeName.toLowerCase());
+            stack.unshift( el.nodeName.toLowerCase() );
         }
         el = el.parentNode;
     }
 
-    return stack.slice(1); // removes the html element
+    return stack.slice( 1 ); // removes the html element
 }
 
-var box = $("<div class='outer' />").css(
+var box = $( "<div class='outer' />" ).css(
 {
     display: "none",
     position: "absolute",
@@ -91,24 +91,30 @@ function toggleEnabled()
             mouseY = e.clientY;
             target = e.target;
         } );
-        $("body").on("click.nukem", function(e)
+        $( "body" ).on( "click.nukem", function( e )
         {
-            var path = getDomPath(target).join(" > ");
+            var selector = "#" + $( target ).prop( "id" );
+
+            if ( selector.trim() === "#" )
+            {
+                selector = getDomPath( target ).join( " > " );
+            }
+
             chrome.extension.sendRequest(
                 {
                     method: "remove",
-                    path: path,
+                    selector: selector,
                     url: window.location.href
                 },
-                function(response) {}
+                function( response ) {}
             );
-            $(path).remove();
-        });
+            $( selector ).remove();
+        } );
     }
     else
     {
         $( "body" ).off( "mousemove.nukem" );
-        $("body").off("click.nukem");
+        $( "body" ).off( "click.nukem" );
 
         target = undefined;
 
@@ -116,7 +122,7 @@ function toggleEnabled()
             {
                 method: "options",
             },
-            function(response) {}
+            function( response ) {}
         );
     }
 }

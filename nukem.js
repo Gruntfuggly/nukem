@@ -1,6 +1,6 @@
-function remove( elementPath )
+function remove( selector )
 {
-    $( elementPath ).remove();
+    $( selector ).remove();
 }
 
 var url = document.location.href;
@@ -12,9 +12,10 @@ chrome.extension.sendRequest(
     },
     function( response )
     {
-        response.paths.map( function( path )
+        console.log( JSON.stringify( response.selectors ) );
+        response.selectors.map( function( selector )
         {
-            remove( path );
+            remove( selector );
         } );
     }
 );
