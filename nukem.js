@@ -12,10 +12,12 @@ chrome.extension.sendRequest(
     },
     function( response )
     {
-        console.log( JSON.stringify( response.selectors ) );
-        response.selectors.map( function( selector )
+        response.elements.map( function( element )
         {
-            remove( selector );
+            setTimeout( function()
+            {
+                remove( element.selector );
+            }, element.delay );
         } );
     }
 );
