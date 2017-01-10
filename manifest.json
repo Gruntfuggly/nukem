@@ -2,9 +2,11 @@
     "manifest_version": 2,
     "name": "Nukem",
     "description": "",
-    "version": "1.0",
+    "version": "0.1",
     "author": "Gruntfuggly",
     "permissions": [
+        "chrome://favicon/",
+        "management",
         "activeTab"
     ],
     "icons":
@@ -22,6 +24,7 @@
         "default_icon": "icons/nukem-19-disabled.png",
         "default_title": "Enable Nukem"
     },
+    "options_page": "options.html",
     "content_scripts": [
     {
         "matches": [ "*://*/*" ],
