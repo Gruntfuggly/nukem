@@ -1,6 +1,13 @@
-function remove( selector )
+function remove( selector, method )
 {
-    $( selector ).remove();
+    if ( method === 0 )
+    {
+        $( selector ).remove();
+    }
+    else
+    {
+        $( selector ).css( "visibility", "hidden" );
+    }
 }
 
 var url = document.location.href;
@@ -16,7 +23,7 @@ chrome.extension.sendRequest(
         {
             setTimeout( function()
             {
-                remove( element.selector );
+                remove( element.selector, element.method );
             }, element.delay );
         } );
     }

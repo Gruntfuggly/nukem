@@ -1,7 +1,8 @@
 {
     "manifest_version": 2,
     "name": "Nukem",
-    "description": "",
+    "short_name": "Nukem",
+    "description": "Remove elements from web pages permanently",
     "version": "0.1",
     "author": "Gruntfuggly",
     "permissions": [
