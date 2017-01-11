@@ -36,17 +36,6 @@ function toggleEnabled()
     );
 }
 
-function openOptions()
-{
-    chrome.tabs.create(
-    {
-        'url': chrome.extension.getURL( 'options.html' )
-    }, function( tab )
-    {
-        // Tab opened.
-    } );
-}
-
 function addSite( url, selector )
 {
     var settingsData = window.localStorage.getItem( "settings" );
@@ -108,7 +97,7 @@ chrome.extension.onRequest.addListener(
         }
         else if ( request.method === "options" )
         {
-            openOptions();
+            chrome.runtime.openOptionsPage( function() {} );
         }
         else if ( request.method === "getElements" )
         {
