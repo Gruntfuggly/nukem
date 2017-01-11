@@ -80,9 +80,9 @@ window.requestAnimationFrame( function frame()
     } );
 } );
 
-function toggleEnabled()
+function setEnabled( enable )
 {
-    enabled = !enabled;
+    enabled = enable;
 
     if ( enabled )
     {
@@ -137,7 +137,7 @@ chrome.extension.onRequest.addListener(
     {
         if ( request.method == "toggle-enabled" )
         {
-            toggleEnabled();
+            setEnabled( !enabled );
             if ( !enabled && elementsNuked > 0 )
             {
                 chrome.extension.sendRequest(
@@ -150,6 +150,20 @@ chrome.extension.onRequest.addListener(
             sendResponse(
             {
                 enabled: enabled
+            } );
+        }
+    }
+);
+
+chrome.extension.onMessage.addListener(
+    function( request, sender, sendResponse )
+    {
+        if ( request.method == "stop" )
+        {
+            setEnabled( false );
+            sendResponse(
+            {
+                enabled: false
             } );
         }
     }
