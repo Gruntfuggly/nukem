@@ -90,6 +90,10 @@ chrome.extension.onRequest.addListener(
         if ( request.method === "reset" )
         {
             setIcon( false );
+            chrome.browserAction.setBadgeText(
+            {
+                text: ""
+            } );
         }
         else if ( request.method === "remove" )
         {
@@ -104,6 +108,13 @@ chrome.extension.onRequest.addListener(
             sendResponse(
             {
                 elements: getElements( request.url )
+            } );
+        }
+        else if ( request.method === "updateBadge" )
+        {
+            chrome.browserAction.setBadgeText(
+            {
+                text: request.elementsNuked.toString()
             } );
         }
         else
