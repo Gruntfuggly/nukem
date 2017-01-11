@@ -56,7 +56,8 @@ function addSite( url, selector )
     {
         url: url,
         selector: selector,
-        delay: 0
+        delay: 0,
+        method: 0
     } );
     window.localStorage.setItem( "settings", JSON.stringify( settings ) );
 }

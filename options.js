@@ -39,9 +39,13 @@ function addRow( url, selector )
     delayField.value = "0";
     delayCell.appendChild( delayField );
 
-    var removeCell = row.insertCell( 3 );
+    var methodCell = row.insertCell( 3 );
+    $( methodCell ).append( $( "<select><option>Hide</option><option>Blank</option></select>" ) );
+
+    var removeCell = row.insertCell( 4 );
+    $( removeCell ).prop( "align", "right" );
     var removeButton = document.createElement( "button" );
-    removeButton.innerHTML = "Remove";
+    removeButton.innerHTML = "Cancel";
     removeCell.appendChild( removeButton );
 
     removeButton.addEventListener( 'click', function()
@@ -85,6 +89,7 @@ function loadURLs()
     row.innerHTML += "<th>Domain</th>";
     row.innerHTML += "<th>Element</th>";
     row.innerHTML += "<th width='10%'>Delay (ms)</th>";
+    row.innerHTML += "<th width='1%'>Method</th>";
     row.innerHTML += "<th width='1%'></th>";
 
     var settingsData = window.localStorage.getItem( "settings" );
@@ -114,17 +119,18 @@ function serialize()
         var url = urlsTable.rows[ row ].cells[ 0 ].getElementsByTagName( 'input' )[ 0 ].value;
         var selector = urlsTable.rows[ row ].cells[ 1 ].getElementsByTagName( 'input' )[ 0 ].value;
         var delay = urlsTable.rows[ row ].cells[ 2 ].getElementsByTagName( 'input' )[ 0 ].value;
+        var method = parseInt( $( urlsTable.rows[ row ].cells[ 3 ].getElementsByTagName( 'select' ) ).find( "option:selected" ) );
         if ( url.trim() !== '' )
         {
             settings.push(
             {
                 url: url,
                 selector: selector,
-                delay: parseInt( delay )
+                delay: parseInt( delay ),
+                method: method
             } );
         }
     }
-
     return JSON.stringify( settings );
 }
 
