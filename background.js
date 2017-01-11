@@ -12,7 +12,7 @@ function setIcon( enabled )
     } );
     chrome.browserAction.setTitle(
     {
-        title: ( enabled % 2 != 0 ? "Stop" : "Start" ) + " nuking..."
+        title: ( enabled % 2 != 0 ? "Stop" : "Start" ) + " nukin'..."
     } );
 }
 

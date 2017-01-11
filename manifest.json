@@ -22,7 +22,8 @@
     "browser_action":
     {
         "default_icon": "icons/nukem-19-disabled.png",
-        "default_title": "Enable Nukem"
+        "default_title": "Start nukin'...",
+        "default_popup": "info.html"
     },
     "options_page": "options.html",
     "content_scripts": [
