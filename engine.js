@@ -1,4 +1,5 @@
 var enabled = false;
+var elementsNuked = 0;
 
 function getDomPath( el )
 {
@@ -85,6 +86,8 @@ function toggleEnabled()
 
     if ( enabled )
     {
+        elementsNuked = 0;
+
         $( "body" ).on( "mousemove.nukem", function( e )
         {
             mouseX = e.clientX;
@@ -99,6 +102,8 @@ function toggleEnabled()
             {
                 selector = getDomPath( target ).join( " > " );
             }
+
+            elementsNuked++;
 
             chrome.extension.sendRequest(
                 {
@@ -117,13 +122,6 @@ function toggleEnabled()
         $( "body" ).off( "click.nukem" );
 
         target = undefined;
-
-        chrome.extension.sendRequest(
-            {
-                method: "options",
-            },
-            function( response ) {}
-        );
     }
 }
 
@@ -140,6 +138,15 @@ chrome.extension.onRequest.addListener(
         if ( request.method == "toggle-enabled" )
         {
             toggleEnabled();
+            if ( !enabled && elementsNuked > 0 )
+            {
+                chrome.extension.sendRequest(
+                    {
+                        method: "options",
+                    },
+                    function( response ) {}
+                );
+            }
             sendResponse(
             {
                 enabled: enabled
