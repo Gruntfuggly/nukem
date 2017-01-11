@@ -6,7 +6,6 @@
     "author": "Gruntfuggly",
     "permissions": [
         "chrome://favicon/",
-        "management",
         "activeTab"
     ],
     "icons":
