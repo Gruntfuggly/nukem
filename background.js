@@ -3,6 +3,7 @@
 //     chrome.tabs.create( { url : "http://zaonce.com/projects/nukem.shtml" } );
 //     localStorage['firstRun'] = 'true';
 // }
+var currentTab;
 
 function setIcon( enabled )
 {
@@ -14,6 +15,13 @@ function setIcon( enabled )
     {
         title: ( enabled % 2 != 0 ? "Stop" : "Start" ) + " nukin'..."
     } );
+    if ( !enabled )
+    {
+        chrome.browserAction.setBadgeText(
+        {
+            text: ""
+        } );
+    }
 }
 
 function toggleEnabled()
@@ -30,6 +38,17 @@ function toggleEnabled()
                 function( response )
                 {
                     setIcon( response.enabled );
+                    if ( response.enabled )
+                    {
+                        chrome.tabs.query(
+                        {
+                            active: true,
+                            currentWindow: true
+                        }, function( tabs )
+                        {
+                            currentTab = tabs[ 0 ].id;
+                        } );
+                    }
                 }
             );
         }
@@ -89,16 +108,24 @@ function getElements( url )
 
 chrome.browserAction.onClicked.addListener( toggleEnabled );
 
+chrome.tabs.onActivated.addListener( function( tabId, changeInfo, tab )
+{
+    setIcon( false );
+
+    if( currentTab )
+    {
+        chrome.tabs.sendMessage( currentTab, {
+            method: "stop"
+        }, function( response ) { });
+    }
+});
+
 chrome.extension.onRequest.addListener(
     function( request, sender, sendResponse )
     {
         if ( request.method === "reset" )
         {
             setIcon( false );
-            chrome.browserAction.setBadgeText(
-            {
-                text: ""
-            } );
         }
         else if ( request.method === "remove" )
         {
