@@ -34,6 +34,11 @@ function toggleEnabled()
             );
         }
     );
+
+    chrome.browserAction.setPopup(
+    {
+        popup: ""
+    } );
 }
 
 function addSite( url, selector )
