@@ -7,20 +7,17 @@ var currentTab;
 
 function setIcon( enabled )
 {
-    chrome.browserAction.setIcon(
-    {
+    chrome.browserAction.setIcon( {
         path: "icons/nukem-" + ( enabled % 2 != 0 ? "19" : "19-disabled" ) + ".png"
-    } );
-    chrome.browserAction.setTitle(
-    {
+    });
+    chrome.browserAction.setTitle( {
         title: ( enabled % 2 != 0 ? "Stop" : "Start" ) + " nukin'..."
-    } );
-    if ( !enabled )
+    });
+    if( !enabled )
     {
-        chrome.browserAction.setBadgeText(
-        {
+        chrome.browserAction.setBadgeText( {
             text: ""
-        } );
+        });
     }
 }
 
@@ -38,26 +35,24 @@ function toggleEnabled()
                 function( response )
                 {
                     setIcon( response.enabled );
-                    if ( response.enabled )
+                    if( response.enabled )
                     {
-                        chrome.tabs.query(
-                        {
+                        chrome.tabs.query( {
                             active: true,
                             currentWindow: true
                         }, function( tabs )
-                        {
-                            currentTab = tabs[ 0 ].id;
-                        } );
+                            {
+                                currentTab = tabs[ 0 ].id;
+                            });
                     }
                 }
             );
         }
     );
 
-    chrome.browserAction.setPopup(
-    {
+    chrome.browserAction.setPopup( {
         popup: ""
-    } );
+    });
 }
 
 function addSite( url, selector )
@@ -65,13 +60,12 @@ function addSite( url, selector )
     var settingsData = window.localStorage.getItem( "settings" );
     var settings = settingsData ? JSON.parse( settingsData ) : [];
 
-    settings.push(
-    {
+    settings.push( {
         url: url,
         selector: selector,
         delay: 0,
         method: 0
-    } );
+    });
     window.localStorage.setItem( "settings", JSON.stringify( settings ) );
 }
 
@@ -97,11 +91,11 @@ function getElements( url )
 
     settings.map( function( entry )
     {
-        if ( pageMatches( url, entry.url ) )
+        if( pageMatches( url, entry.url ) )
         {
             selectors.push( entry );
         }
-    } );
+    });
 
     return selectors;
 }
@@ -123,36 +117,35 @@ chrome.tabs.onActivated.addListener( function( tabId, changeInfo, tab )
 chrome.extension.onRequest.addListener(
     function( request, sender, sendResponse )
     {
-        if ( request.method === "reset" )
+        if( request.method === "reset" )
         {
             setIcon( false );
         }
-        else if ( request.method === "remove" )
+        else if( request.method === "remove" )
         {
             addSite( request.url, request.selector );
         }
-        else if ( request.method === "options" )
+        else if( request.method === "options" )
         {
-            chrome.runtime.openOptionsPage( function() {} );
+            chrome.runtime.openOptionsPage( function() { });
         }
-        else if ( request.method === "getElements" )
+        else if( request.method === "getElements" )
         {
-            sendResponse(
-            {
+            sendResponse( {
                 elements: getElements( request.url )
-            } );
+            });
         }
-        else if ( request.method === "updateBadge" )
+        else if( request.method === "updateBadge" )
         {
-            chrome.browserAction.setBadgeText(
-            {
+            chrome.browserAction.setBadgeText( {
                 text: request.elementsNuked.toString()
-            } );
+            });
         }
         else
         {
             sendResponse(
-            {} ); // snub them.
+                {}
+            ); // snub them.
         }
     }
 );

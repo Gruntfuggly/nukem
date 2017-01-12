@@ -3,7 +3,7 @@ var elementsNuked = 0;
 function remove( selector, method )
 {
     elementsNuked++;
-    if ( method === 0 )
+    if( method === 0 )
     {
         $( selector ).remove();
     }
@@ -11,20 +11,18 @@ function remove( selector, method )
     {
         $( selector ).css( "visibility", "hidden" );
     }
-    chrome.extension.sendRequest(
-    {
+    chrome.extension.sendRequest( {
         method: "updateBadge",
         elementsNuked: elementsNuked
-    } );
+    });
 }
 
 var url = document.location.href;
 
-chrome.extension.sendRequest(
-    {
-        method: "getElements",
-        url: url
-    },
+chrome.extension.sendRequest( {
+    method: "getElements",
+    url: url
+},
     function( response )
     {
         var elementsNuked = 0;
@@ -34,6 +32,6 @@ chrome.extension.sendRequest(
             {
                 remove( element.selector, element.method );
             }, element.delay );
-        } );
+        });
     }
 );

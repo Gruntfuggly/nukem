@@ -2,7 +2,7 @@ var checked = false;
 
 function setIcon( cell, url )
 {
-    if ( url.indexOf( "*" ) !== -1 )
+    if( url.indexOf( "*" ) !== -1 )
     {
         url = url.match( /^([\w-]+:\/*\[?[\w\.:-]+)\]?(?::\d+)?/ )[ 1 ] + "/";
     }
@@ -51,11 +51,11 @@ function addRow( url, selector )
     removeButton.addEventListener( 'click', function()
     {
         deleteRow( this )
-    } );
+    });
 
     setIcon( urlCell, url );
 
-    if ( url === "" )
+    if( url === "" )
     {
         domainField.focus();
     }
@@ -95,7 +95,7 @@ function loadURLs()
     var settingsData = window.localStorage.getItem( "settings" );
     var settings = settingsData ? JSON.parse( settingsData ) : [];
 
-    if ( settings.length === 0 )
+    if( settings.length === 0 )
     {
         addRow( '', '' );
     }
@@ -104,7 +104,7 @@ function loadURLs()
         settings.map( function( entry )
         {
             addRow( entry.url, entry.selector );
-        } );
+        });
     }
 }
 
@@ -114,21 +114,20 @@ function serialize()
 
     var settings = [];
 
-    for ( var row = 1; row < urlsTable.rows.length; row++ )
+    for( var row = 1; row < urlsTable.rows.length; row++ )
     {
         var url = urlsTable.rows[ row ].cells[ 0 ].getElementsByTagName( 'input' )[ 0 ].value;
         var selector = urlsTable.rows[ row ].cells[ 1 ].getElementsByTagName( 'input' )[ 0 ].value;
         var delay = urlsTable.rows[ row ].cells[ 2 ].getElementsByTagName( 'input' )[ 0 ].value;
         var method = parseInt( $( urlsTable.rows[ row ].cells[ 3 ].getElementsByTagName( 'select' ) ).find( "option:selected" ) );
-        if ( url.trim() !== '' )
+        if( url.trim() !== '' )
         {
-            settings.push(
-            {
+            settings.push( {
                 url: url,
                 selector: selector,
                 delay: parseInt( delay ),
                 method: method
-            } );
+            });
         }
     }
     return JSON.stringify( settings );
@@ -182,13 +181,13 @@ document.addEventListener( 'DOMContentLoaded', function()
     document.querySelector( 'button#add-button' ).addEventListener( 'click', function()
     {
         addRow( '', '' );
-    } );
+    });
     document.querySelector( 'button#save-button' ).addEventListener( 'click', function()
     {
         save();
-    } );
+    });
     document.querySelector( 'button#close-button' ).addEventListener( 'click', function()
     {
         cancel();
-    } );
-} );
+    });
+});
