@@ -6,58 +6,38 @@ function setIcon( cell, url )
     {
         url = url.match( /^([\w-]+:\/*\[?[\w\.:-]+)\]?(?::\d+)?/ )[ 1 ] + "/";
     }
-    console.log( url );
-    cell.setAttribute( 'style', 'background-image: url(\'chrome://favicon/' + url + '\');' );
+    $( cell ).css( "background-image", "url(\'chrome://favicon/" + url + "\')" );
 }
 
-function addRow( url, selector )
+function addRow( entry )
 {
-    var table = document.getElementById( 'urlsTable' );
+    $( "#elementsTable" )
+        .append( $( "<tr>" )
+            .append( $( "<td class='url'>" )
+                .append( $( "<input type='text' class='url' value='" + entry.url + "'>" )
+                    .on( "blur", function() { refreshIcon( this ); }) ) )
+            .append( $( "<td>" )
+                .append( $( "<input type='text' class='selector' value='" + entry.selector + "'>" ) ) )
+            .append( $( "<td>" )
+                .append( $( "<input type='text' class='delay' value='" + entry.delay + "'>" ) ) )
+            .append( $( "<td>" )
+                .append( $( "<select class='method'>" )
+                    .append( $( "<option selected>" ).html( "Hide" ) )
+                    .append( $( "<option>" ).html( "Blank" ) ) ) )
+            .append( $( "<td class='remove'>" )
+                .append( $( "<button>" ).html( "Remove" ).on( "click", function() { deleteRow( this ); }) )
+            ) );
 
-    var rowCount = table.rows.length;
-    var row = table.insertRow( rowCount );
-
-    var urlCell = row.insertCell( 0 );
-    urlCell.className = "domain";
-    var domainField = document.createElement( "input" );
-    domainField.type = "text";
-    domainField.value = url;
-    domainField.setAttribute( 'onblur', 'refreshIcon( this )' );
-    urlCell.appendChild( domainField );
-
-    var selectorCell = row.insertCell( 1 );
-    selectorCell.className = "pattern";
-    var selectorField = document.createElement( "input" );
-    selectorField.type = "text";
-    selectorField.value = selector;
-    selectorCell.appendChild( selectorField );
-
-    var delayCell = row.insertCell( 2 );
-    delayCell.className = "delay";
-    var delayField = document.createElement( "input" );
-    delayField.type = "text";
-    delayField.value = "0";
-    delayCell.appendChild( delayField );
-
-    var methodCell = row.insertCell( 3 );
-    $( methodCell ).append( $( "<select><option>Hide</option><option>Blank</option></select>" ) );
-
-    var removeCell = row.insertCell( 4 );
-    $( removeCell ).prop( "align", "right" );
-    var removeButton = document.createElement( "button" );
-    removeButton.innerHTML = "Cancel";
-    removeCell.appendChild( removeButton );
-
-    removeButton.addEventListener( 'click', function()
+    if( typeof entry.method === "number" )
     {
-        deleteRow( this )
-    });
+        $( "#elementsTable tr:last select" ).prop( "selectedIndex", entry.method );
+    }
 
-    setIcon( urlCell, url );
+    setIcon( $( "#elementsTable tr:last td:first" ), entry.url );
 
-    if( url === "" )
+    if( entry.url === "" )
     {
-        domainField.focus();
+        $( "#elementsTable tr:last input.url" ).focus();
     }
 }
 
@@ -69,11 +49,9 @@ function deleteRow( button )
     table.removeChild( row );
 }
 
-function refreshIcon( domainField )
+function refreshIcon( field )
 {
-    var domain = domainField.value;
-    var cell = domainField.parentNode;
-    setIcon( cell, domain );
+    setIcon( $( field ).parent(), field.value );
 }
 
 function loadURLs()
@@ -81,13 +59,13 @@ function loadURLs()
     checked = false;
 
     var table = document.createElement( 'table' );
-    table.id = 'urlsTable';
+    table.id = 'elementsTable';
 
     document.getElementById( 'urls' ).appendChild( table );
 
     var row = table.insertRow( 0 );
-    row.innerHTML += "<th>Domain</th>";
-    row.innerHTML += "<th>Element</th>";
+    row.innerHTML += "<th>URL</th>";
+    row.innerHTML += "<th>Selector</th>";
     row.innerHTML += "<th width='10%'>Delay (ms)</th>";
     row.innerHTML += "<th width='1%'>Method</th>";
     row.innerHTML += "<th width='1%'></th>";
@@ -103,33 +81,35 @@ function loadURLs()
     {
         settings.map( function( entry )
         {
-            addRow( entry.url, entry.selector );
+            addRow( entry );
         });
     }
 }
 
 function serialize()
 {
-    var urlsTable = document.getElementById( 'urlsTable' );
+    var elementsTable = document.getElementById( 'elementsTable' );
 
     var settings = [];
 
-    for( var row = 1; row < urlsTable.rows.length; row++ )
+    for( var row = 1; row < elementsTable.rows.length; row++ )
     {
-        var url = urlsTable.rows[ row ].cells[ 0 ].getElementsByTagName( 'input' )[ 0 ].value;
-        var selector = urlsTable.rows[ row ].cells[ 1 ].getElementsByTagName( 'input' )[ 0 ].value;
-        var delay = urlsTable.rows[ row ].cells[ 2 ].getElementsByTagName( 'input' )[ 0 ].value;
-        var method = parseInt( $( urlsTable.rows[ row ].cells[ 3 ].getElementsByTagName( 'select' ) ).find( "option:selected" ) );
+        var url = elementsTable.rows[ row ].cells[ 0 ].getElementsByTagName( 'input' )[ 0 ].value;
+        var selector = elementsTable.rows[ row ].cells[ 1 ].getElementsByTagName( 'input' )[ 0 ].value;
+        var delay = elementsTable.rows[ row ].cells[ 2 ].getElementsByTagName( 'input' )[ 0 ].value;
+        var method = parseInt( $( elementsTable.rows[ row ].cells[ 3 ].getElementsByTagName( 'select' ) ).prop( "selectedIndex" ) );
+
         if( url.trim() !== '' )
         {
             settings.push( {
                 url: url,
                 selector: selector,
                 delay: parseInt( delay ),
-                method: method
+                method: ( method === null ) ? 0 : method
             });
         }
     }
+
     return JSON.stringify( settings );
 }
 
@@ -180,7 +160,12 @@ document.addEventListener( 'DOMContentLoaded', function()
     loadURLs();
     document.querySelector( 'button#add-button' ).addEventListener( 'click', function()
     {
-        addRow( '', '' );
+        addRow( {
+            url: "",
+            selector: "",
+            delay: 0,
+            method: 0
+        });
     });
     document.querySelector( 'button#save-button' ).addEventListener( 'click', function()
     {
