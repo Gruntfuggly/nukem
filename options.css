@@ -1,4 +1,5 @@
-body {
+body
+{
     font-family: Helvetica;
     font-size: 11px;
     cursor: default;
@@ -7,9 +8,11 @@ body {
     background-color: #ebeff9;
     overflow: hidden;
     margin: -20px -20px -20px 267px;
+    user-select: none;
 }
 
-.options {
+.options
+{
     z-index: 2;
     position: absolute;
     left: 267px;
@@ -21,7 +24,8 @@ body {
     overflow-x: hidden;
 }
 
-.background {
+.background
+{
     border-left: 1px solid #C6C9CE;
     box-shadow: 0 0 20px #cdcdcd;
     width: 100%;
@@ -29,14 +33,8 @@ body {
     background-color: #FFF;
 }
 
-button,
-div {
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
-    cursor: arrow;
-}
-
-select {
+select
+{
     border-radius: 2px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     background: -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
@@ -50,7 +48,8 @@ select {
     height: 26px;
 }
 
-button {
+button
+{
     border-radius: 2px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     background: -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
@@ -63,33 +62,33 @@ button {
     padding: 3px 12px;
 }
 
-button:hover {
+button:hover
+{
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     background: #EBEBEB -webkit-linear-gradient(#FEFEFE, #F8F8F8 40%, #E9E9E9);
     border-color: #999;
     color: #222;
 }
 
-button:active {
+button:active
+{
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
     background: #EBEBEB -webkit-linear-gradient(#F4F4F4, #EFEFEF 40%, #DCDCDC);
     color: #333;
 }
 
-h1 {
-    border-bottom: 1px solid #eee;
+h1
+{
     color: #53637d;
     font-size: 2em;
     font-weight: normal;
     margin: 0;
-    padding-bottom: 4px;
-    padding-top: 13px;
+    padding: 13px 24px 0 4px;
     text-shadow: #FFF 0 1px 2px;
-    -webkit-padding-end: 24px;
-    -webkit-user-select: none;
 }
 
-.navigate {
+.navigate
+{
     left: 0;
     top: 0;
     height: 50px;
@@ -98,49 +97,63 @@ h1 {
     z-index: -1;
 }
 
-.navigate h1 {
+.navigate h1
+{
     border-bottom: none;
     text-align: right;
 }
 
-.listContainer {
+.listContainer
+{
     border: 1px solid #D9D9D9;
     border-radius: 2px;
     margin-top: 10px;
 }
 
-#content {
+#content
+{
     clear: both;
     height: 240px;
     position: relative;
 }
 
-#urlsTable {
+#elementsTable
+{
     width: 100%;
     margin: .5rem 0;
     padding: 0 .5rem;
 }
 
-#urlsTable .domain {
+#elementsTable .url
+{
     padding-left: 26px;
     background-repeat: no-repeat;
     background-position: 5px 50%;
 }
 
-#urlsTable th {
-    text-align: left;
-}
-
-#urlsTable th:nth-child(1) {
+#elementsTable .remove
+{
     padding-left: 26px;
 }
 
-#urlsTable input {
+#elementsTable th
+{
+    text-align: left;
+}
+
+#elementsTable th:nth-child(1)
+{
+    padding-left: 26px;
+}
+
+#elementsTable input
+{
     width: 100%;
     margin: 0 auto;
 }
 
-#options input {
+#options input
+{
     border-radius: 2px;
     border: 1px solid #AAA;
     font-size: inherit;
