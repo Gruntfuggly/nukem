@@ -109,7 +109,7 @@ function setEnabled( enable )
             chrome.extension.sendRequest( {
                 method: "remove",
                 selector: selector,
-                url: window.location.href
+                url: window.location.protocol + "//" + window.location.hostname + window.location.pathname
             }, function( response ) { }
             );
             $( selector ).remove();
