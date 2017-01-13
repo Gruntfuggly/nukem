@@ -11,7 +11,7 @@ function setIcon( cell, url )
 
 function addRow( entry )
 {
-    $( "#elementsTable" )
+    $( "#elementsTable tbody" )
         .append( $( "<tr>" )
             .append( $( "<td class='url'>" )
                 .append( $( "<input type='text' class='url' value='" + entry.url + "'>" )
@@ -38,14 +38,6 @@ function addRow( entry )
     }
 }
 
-function deleteRow( button )
-{
-    var cell = button.parentNode;
-    var row = cell.parentNode;
-    var table = row.parentNode;
-    table.removeChild( row );
-}
-
 function refreshIcon( field )
 {
     setIcon( $( field ).parent(), field.value );
@@ -55,17 +47,22 @@ function loadURLs()
 {
     checked = false;
 
-    var table = document.createElement( 'table' );
-    table.id = 'elementsTable';
+    $( "#elementsTable" ).remove();
 
-    document.getElementById( 'urls' ).appendChild( table );
+    var heading = $( "<tr>" )
+        .appendTo( $( "<thead>" )
+            .appendTo( $( "<table id='elementsTable'>" )
+                .appendTo( $( "#urls" ) ) ) );
 
-    var row = table.insertRow( 0 );
-    row.innerHTML += "<th>URL</th>";
-    row.innerHTML += "<th>Selector</th>";
-    row.innerHTML += "<th width='10%'>Delay (ms)</th>";
-    row.innerHTML += "<th width='1%'>Method</th>";
-    row.innerHTML += "<th width='1%'></th>";
+    [ "URL", "Selector", "Delay (ms)", "Method", "" ].map( function( title )
+    {
+        heading.append( $( "<th>" ).html( title ) );
+    });
+
+    heading.find( "th:nth-child(3)" ).prop( "width", "10%" );
+    heading.find( "th" ).slice( -2 ).prop( "width", "1%" );
+
+    $( "#elementsTable" ).append( $( "<tbody>" ) );
 
     var settingsData = window.localStorage.getItem( "settings" );
     var settings = settingsData ? JSON.parse( settingsData ) : [];
