@@ -25,7 +25,7 @@ function addRow( entry )
                     .append( $( "<option selected>" ).html( "Hide" ) )
                     .append( $( "<option>" ).html( "Blank" ) ) ) )
             .append( $( "<td class='remove'>" )
-                .append( $( "<button>" ).html( "Remove" ).on( "click", function() { deleteRow( this ); }) )
+                .append( $( "<button>" ).html( "Remove" ).on( "click", function() { $( this ).closest( "tr" ).remove(); }) )
             ) );
 
     $( "#elementsTable tr:last select" ).val( entry.method );
