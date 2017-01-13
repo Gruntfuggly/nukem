@@ -124,11 +124,6 @@ function setEnabled( enable )
     }
 }
 
-chrome.extension.sendRequest( {
-    method: "reset"
-}, function( response ) { }
-);
-
 chrome.extension.onRequest.addListener(
     function( request, sender, sendResponse )
     {

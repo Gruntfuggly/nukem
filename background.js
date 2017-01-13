@@ -4,6 +4,7 @@
 //     localStorage['firstRun'] = 'true';
 // }
 var currentTab;
+var elementsNuked = 0;
 
 function setIcon( enabled )
 {
@@ -13,12 +14,14 @@ function setIcon( enabled )
     chrome.browserAction.setTitle( {
         title: ( enabled % 2 != 0 ? "Stop" : "Start" ) + " nukin'..."
     });
-    if( !enabled )
-    {
-        chrome.browserAction.setBadgeText( {
-            text: ""
-        });
-    }
+}
+
+function setBadge( count )
+{
+    console.log( "set badge " + count );
+    chrome.browserAction.setBadgeText( {
+        text: ( count > 0 ) ? count.toString() : ""
+    });
 }
 
 function toggleEnabled()
@@ -105,6 +108,7 @@ chrome.browserAction.onClicked.addListener( toggleEnabled );
 chrome.tabs.onActivated.addListener( function( tabId, changeInfo, tab )
 {
     setIcon( false );
+    setBadge( 0 );
 
     if( currentTab )
     {
@@ -117,11 +121,7 @@ chrome.tabs.onActivated.addListener( function( tabId, changeInfo, tab )
 chrome.extension.onRequest.addListener(
     function( request, sender, sendResponse )
     {
-        if( request.method === "reset" )
-        {
-            setIcon( false );
-        }
-        else if( request.method === "remove" )
+        if( request.method === "remove" )
         {
             addSite( request.url, request.selector );
         }
@@ -131,15 +131,15 @@ chrome.extension.onRequest.addListener(
         }
         else if( request.method === "getElements" )
         {
+            elementsNuked = 0;
+            setBadge( 0 );
             sendResponse( {
                 elements: getElements( request.url )
             });
         }
-        else if( request.method === "updateBadge" )
+        else if( request.method === "elementNuked" )
         {
-            chrome.browserAction.setBadgeText( {
-                text: request.elementsNuked.toString()
-            });
+            setBadge( ++elementsNuked );
         }
         else
         {
