@@ -3,7 +3,7 @@ var elementsNuked = 0;
 function remove( selector, method )
 {
     elementsNuked++;
-    if( method === 0 )
+    if( method === "Hide" )
     {
         $( selector ).remove();
     }
@@ -31,7 +31,7 @@ chrome.extension.sendRequest( {
             setTimeout( function()
             {
                 remove( element.selector, element.method );
-            }, element.delay );
+            }, parseInt( element.delay ) );
         });
     }
 );
