@@ -6,6 +6,16 @@
 var currentTab;
 var elementsNuked = 0;
 
+function getDefaultEntry()
+{
+    return {
+        url: "",
+        selector: "",
+        delay: 0,
+        method: "Blank"
+    };
+}
+
 function setIcon( enabled )
 {
     chrome.browserAction.setIcon( {
@@ -66,8 +76,8 @@ function addSite( url, selector )
     settings.push( {
         url: url,
         selector: selector,
-        delay: 0,
-        method: 0
+        delay: "0",
+        method: "Hide"
     });
     window.localStorage.setItem( "settings", JSON.stringify( settings ) );
 }
