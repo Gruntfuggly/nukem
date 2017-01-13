@@ -11,6 +11,11 @@ body
     user-select: none;
 }
 
+td
+{
+    user-select: contain;
+}
+
 .options
 {
     z-index: 2;
