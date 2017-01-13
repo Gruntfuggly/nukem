@@ -1,8 +1,5 @@
-var elementsNuked = 0;
-
 function remove( selector, method )
 {
-    elementsNuked++;
     if( method === "Hide" )
     {
         $( selector ).remove();
@@ -12,8 +9,7 @@ function remove( selector, method )
         $( selector ).css( "visibility", "hidden" );
     }
     chrome.extension.sendRequest( {
-        method: "updateBadge",
-        elementsNuked: elementsNuked
+        method: "elementNuked",
     });
 }
 
@@ -25,7 +21,6 @@ chrome.extension.sendRequest( {
 },
     function( response )
     {
-        var elementsNuked = 0;
         response.elements.map( function( element )
         {
             setTimeout( function()
