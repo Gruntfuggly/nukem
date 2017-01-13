@@ -1,5 +1,12 @@
 var checked = false;
 
+const defaultRow = {
+    url: "",
+    selector: "",
+    delay: 0,
+    method: "Hide"
+};
+
 function setIcon( cell, url )
 {
     if( url && url.indexOf( "*" ) !== -1 )
@@ -11,21 +18,35 @@ function setIcon( cell, url )
 
 function addRow( entry )
 {
+    function refreshIcon( field )
+    {
+        setIcon( $( field ).parent(), field.value );
+    }
+
+    function removeRow( button )
+    {
+        $( button ).closest( "tr" ).remove();
+        if( $( "#elementsTable tbody tr" ).length === 0 )
+        {
+            addRow( defaultRow );
+        }
+    }
+
     $( "#elementsTable tbody" )
         .append( $( "<tr>" )
             .append( $( "<td class='url'>" )
-                .append( $( "<input type='text' class='url' value='" + entry.url + "'>" )
+                .append( $( "<input type='text' name='url' value='" + entry.url + "'>" )
                     .on( "blur", function() { refreshIcon( this ); }) ) )
             .append( $( "<td>" )
-                .append( $( "<input type='text' class='selector' value='" + entry.selector + "'>" ) ) )
+                .append( $( "<input type='text' name='selector' value='" + entry.selector + "'>" ) ) )
             .append( $( "<td>" )
-                .append( $( "<input type='text' class='delay' value='" + entry.delay + "'>" ) ) )
+                .append( $( "<input type='text' name='delay' value='" + entry.delay + "'>" ) ) )
             .append( $( "<td>" )
-                .append( $( "<select class='method'>" )
+                .append( $( "<select name='method'>" )
                     .append( $( "<option selected>" ).html( "Hide" ) )
                     .append( $( "<option>" ).html( "Blank" ) ) ) )
             .append( $( "<td class='remove'>" )
-                .append( $( "<button>" ).html( "Remove" ).on( "click", function() { $( this ).closest( "tr" ).remove(); }) )
+                .append( $( "<button>" ).html( "Remove" ).on( "click", function() { removeRow( this ); }) )
             ) );
 
     $( "#elementsTable tr:last select" ).val( entry.method );
@@ -36,11 +57,6 @@ function addRow( entry )
     {
         $( "#elementsTable tr:last input.url" ).focus();
     }
-}
-
-function refreshIcon( field )
-{
-    setIcon( $( field ).parent(), field.value );
 }
 
 function loadURLs()
@@ -69,7 +85,7 @@ function loadURLs()
 
     if( settings.length === 0 )
     {
-        addRow( { url: "", selector: "", delay: 0, method: "Hide" });
+        addRow( defaultRow );
     }
     else
     {
@@ -89,7 +105,7 @@ function serialize()
         var entry = {};
         $( this ).find( "input,select" ).map( function()
         {
-            entry[ $( this ).prop( "class" ) ] = $( this ).prop( "value" );
+            entry[ $( this ).prop( "name" ) ] = $( this ).prop( "value" );
         });
         settings.push( entry );
     });
@@ -142,14 +158,10 @@ window.onbeforeunload = closePage;
 document.addEventListener( 'DOMContentLoaded', function()
 {
     loadURLs();
+
     document.querySelector( 'button#add-button' ).addEventListener( 'click', function()
     {
-        addRow( {
-            url: "",
-            selector: "",
-            delay: 0,
-            method: "Hide"
-        });
+        addRow( defaultRow );
     });
     document.querySelector( 'button#save-button' ).addEventListener( 'click', function()
     {

@@ -124,14 +124,14 @@ h1
     padding: 0 .5rem;
 }
 
-#elementsTable .url
+#elementsTable td.url
 {
     padding-left: 26px;
     background-repeat: no-repeat;
     background-position: 5px 50%;
 }
 
-#elementsTable .remove
+#elementsTable td.remove
 {
     padding-left: 26px;
 }
