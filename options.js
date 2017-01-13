@@ -163,3 +163,8 @@ document.addEventListener( 'DOMContentLoaded', function()
         cancel();
     });
 });
+
+document.addEventListener( 'visibilitychange', function()
+{
+    loadURLs();
+});
