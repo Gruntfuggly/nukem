@@ -28,10 +28,7 @@ function addRow( entry )
                 .append( $( "<button>" ).html( "Remove" ).on( "click", function() { deleteRow( this ); }) )
             ) );
 
-    if( typeof entry.method === "number" )
-    {
-        $( "#elementsTable tr:last select" ).prop( "selectedIndex", entry.method );
-    }
+    $( "#elementsTable tr:last select" ).val( entry.method );
 
     setIcon( $( "#elementsTable tr:last td:first" ), entry.url );
 
@@ -75,7 +72,7 @@ function loadURLs()
 
     if( settings.length === 0 )
     {
-        addRow( '', '' );
+        addRow( { url: "", selector: "", delay: 0, method: "Hide" });
     }
     else
     {
@@ -88,27 +85,17 @@ function loadURLs()
 
 function serialize()
 {
-    var elementsTable = document.getElementById( 'elementsTable' );
-
     var settings = [];
 
-    for( var row = 1; row < elementsTable.rows.length; row++ )
+    $( "#elementsTable tbody tr" ).map( function()
     {
-        var url = elementsTable.rows[ row ].cells[ 0 ].getElementsByTagName( 'input' )[ 0 ].value;
-        var selector = elementsTable.rows[ row ].cells[ 1 ].getElementsByTagName( 'input' )[ 0 ].value;
-        var delay = elementsTable.rows[ row ].cells[ 2 ].getElementsByTagName( 'input' )[ 0 ].value;
-        var method = parseInt( $( elementsTable.rows[ row ].cells[ 3 ].getElementsByTagName( 'select' ) ).prop( "selectedIndex" ) );
-
-        if( url.trim() !== '' )
+        var entry = {};
+        $( this ).find( "input,select" ).map( function()
         {
-            settings.push( {
-                url: url,
-                selector: selector,
-                delay: parseInt( delay ),
-                method: ( method === null ) ? 0 : method
-            });
-        }
-    }
+            entry[ $( this ).prop( "class" ) ] = $( this ).prop( "value" );
+        });
+        settings.push( entry );
+    });
 
     return JSON.stringify( settings );
 }
@@ -164,7 +151,7 @@ document.addEventListener( 'DOMContentLoaded', function()
             url: "",
             selector: "",
             delay: 0,
-            method: 0
+            method: "Hide"
         });
     });
     document.querySelector( 'button#save-button' ).addEventListener( 'click', function()
