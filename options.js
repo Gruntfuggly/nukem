@@ -2,7 +2,7 @@ var checked = false;
 
 function setIcon( cell, url )
 {
-    if( url.indexOf( "*" ) !== -1 )
+    if( url && url.indexOf( "*" ) !== -1 )
     {
         url = url.match( /^([\w-]+:\/*\[?[\w\.:-]+)\]?(?::\d+)?/ )[ 1 ] + "/";
     }
