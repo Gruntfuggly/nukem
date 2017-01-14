@@ -40,6 +40,9 @@ function addRow( entry )
             .append( $( "<td>" )
                 .append( $( "<input type='text' name='selector' value='" + entry.selector + "'>" ) ) )
             .append( $( "<td>" )
+                .append( $( "<button>" ).html( "-" ) )
+                .append( $( "<button>" ).html( "+" ) ) )
+            .append( $( "<td>" )
                 .append( $( "<input type='text' name='delay' value='" + entry.delay + "'>" ) ) )
             .append( $( "<td>" )
                 .append( $( "<select name='method'>" )
@@ -70,13 +73,13 @@ function loadURLs()
             .appendTo( $( "<table id='elementsTable'>" )
                 .appendTo( $( "#urls" ) ) ) );
 
-    [ "URL", "Selector", "Delay (ms)", "Method", "" ].map( function( title )
+    [ "URL", "Selector", "Scope", "Delay (ms)", "Method", "" ].map( function( title )
     {
         heading.append( $( "<th>" ).html( title ) );
     });
 
-    heading.find( "th:nth-child(3)" ).prop( "width", "10%" );
-    heading.find( "th" ).slice( -2 ).prop( "width", "1%" );
+    heading.find( "th" ).slice( -4 ).prop( "width", "1%" );
+    heading.find( "th:nth-child(4)" ).prop( "width", "10%" );
 
     $( "#elementsTable" ).append( $( "<tbody>" ) );
 

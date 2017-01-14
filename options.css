@@ -14,6 +14,7 @@ body
 td
 {
     user-select: contain;
+    white-space: nowrap;
 }
 
 .options
@@ -63,7 +64,7 @@ button
     font-size: inherit;
     margin-bottom: 0;
     margin-top: 2px;
-    min-width: 4em;
+    /*min-width: 4em;*/
     padding: 3px 12px;
 }
 
@@ -170,4 +171,9 @@ h1
     font-size: inherit;
     padding: 3px;
     margin-top: 2px;
+}
+
+#controls button
+{
+    min-width: 4em;
 }
