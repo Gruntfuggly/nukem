@@ -7,7 +7,7 @@ body
     font-family: sans-serif;
     background-color: #ebeff9;
     overflow: hidden;
-    margin: -20px -20px -20px 267px;
+    margin: -20px -20px -20px 200px;
     user-select: none;
 }
 
@@ -20,7 +20,7 @@ td
 {
     z-index: 2;
     position: absolute;
-    left: 267px;
+    left: 200px;
     top: 0;
     bottom: 0;
     right: 0;
@@ -97,7 +97,7 @@ h1
     left: 0;
     top: 0;
     height: 50px;
-    width: 267px;
+    width: 200px;
     position: absolute;
     z-index: -1;
 }
@@ -125,8 +125,14 @@ h1
 #elementsTable
 {
     width: 100%;
-    margin: .5rem 0;
-    padding: 0 .5rem;
+    margin: .25rem 0;
+    padding: 0 .25rem;
+}
+
+#elementsTable button
+{
+    margin-left: .15em;
+    margin-right: .15em;
 }
 
 #elementsTable td.url
@@ -138,7 +144,7 @@ h1
 
 #elementsTable td.remove
 {
-    padding-left: 26px;
+    padding-left: 13px;
 }
 
 #elementsTable th
