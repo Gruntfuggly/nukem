@@ -70,15 +70,18 @@ window.requestAnimationFrame( function frame()
 
     lastTarget = target;
 
-    var $target = $( target );
-    var offset = $target.offset();
+    if( target )
+    {
+        var $target = $( target );
+        var offset = $target.offset();
 
-    box.css( {
-        width: $target.outerWidth() - 1,
-        height: $target.outerHeight() - 1,
-        left: offset.left,
-        top: offset.top
-    });
+        box.css( {
+            width: $target.outerWidth() - 1,
+            height: $target.outerHeight() - 1,
+            left: offset.left,
+            top: offset.top
+        });
+    }
 });
 
 function setEnabled( enable )
