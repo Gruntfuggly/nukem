@@ -9,37 +9,41 @@
         "chrome://favicon/",
         "activeTab"
     ],
-    "icons":
-    {
+    "icons": {
         "16": "icons/nukem-16.png",
         "48": "icons/nukem-48.png",
         "128": "icons/nukem-128.png"
     },
-    "background":
-    {
-        "scripts": [ "background.js" ]
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
     },
-    "browser_action":
-    {
+    "browser_action": {
         "default_icon": "icons/nukem-19-disabled.png",
         "default_title": "Start nukin'...",
-        "default_popup": "info.html"
+        "default_popup": "popup.html"
     },
     "options_page": "options.html",
     "content_scripts": [
-    {
-        "matches": [ "*://*/*" ],
-        "js": [
-            "jquery-3.1.1.slim.min.js",
-            "engine.js"
-        ]
-    },
-    {
-        "matches": [ "*://*/*" ],
-        "js": [
-            "jquery-3.1.1.slim.min.js",
-            "nukem.js"
-        ],
-        "run_at": "document_end"
-    } ]
+        {
+            "matches": [
+                "*://*/*"
+            ],
+            "js": [
+                "jquery-3.1.1.slim.min.js",
+                "engine.js"
+            ]
+        },
+        {
+            "matches": [
+                "*://*/*"
+            ],
+            "js": [
+                "jquery-3.1.1.slim.min.js",
+                "nukem.js"
+            ],
+            "run_at": "document_end"
+        }
+    ]
 }
