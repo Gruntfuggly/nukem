@@ -105,6 +105,11 @@ function setEnabled( enable )
             if( selector.trim() === "#" )
             {
                 selector = getDomPath( target ).join( " > " );
+                var lastHash = selector.lastIndexOf( "#" );
+                if( lastHash > 0 )
+                {
+                    selector = selector.substr( lastHash );
+                }
             }
 
             elementsNuked++;
