@@ -6,7 +6,7 @@ function setIcon( cell, url )
 {
     if( url && url.indexOf( "*" ) !== -1 )
     {
-        url = url.match( /^([\w-]+:\/*\[?[\w\.:-]+)\]?(?::\d+)?/ )[ 1 ] + "/";
+        url = url.match( /^([\w-]+:\/*\[?[\w\.:-]+)\]?(?::\d+)?/ )[ 1 ];
     }
     $( cell ).css( "background-image", "url(\'chrome://favicon/" + url + "\')" );
 }
