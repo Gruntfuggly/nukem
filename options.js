@@ -27,6 +27,17 @@ function addRow( entry )
         }
     }
 
+    function reduceScope( button )
+    {
+        var selectorField = $( button ).closest( "tr" ).find( "input[name='selector']" );
+        var selectorElements = selectorField.val().split( " > " );
+        if( selectorElements.length > 1 )
+        {
+            selectorElements.pop();
+        }
+        selectorField.val( selectorElements.join( " > " ) );
+    }
+
     $( "#elementsTable tbody" )
         .append( $( "<tr>" )
             .append( $( "<td class='url'>" )
@@ -34,6 +45,8 @@ function addRow( entry )
                     .on( "blur", function() { refreshIcon( this ); }) ) )
             .append( $( "<td>" )
                 .append( $( "<input type='text' name='selector' value='" + entry.selector + "'>" ) ) )
+            .append( $( "<td>" )
+                .append( $( "<button class='reduceScope'>" ).html( "&#9669;" ).on( "click", function() { reduceScope( this ); }) ) )
             .append( $( "<td>" )
                 .append( $( "<input type='text' name='delay' value='" + entry.delay + "'>" ) ) )
             .append( $( "<td>" )
@@ -63,13 +76,13 @@ function loadURLs()
             .appendTo( $( "<table id='elementsTable'>" )
                 .appendTo( $( "#urls" ) ) ) );
 
-    [ "URL", "Selector", "Delay (ms)", "Method", "" ].map( function( title )
+    [ "URL", "Selector", "Scope", "Delay (ms)", "Method", "" ].map( function( title )
     {
         heading.append( $( "<th>" ).html( title ) );
     });
 
-    heading.find( "th:nth-child(3)" ).prop( "width", "10%" );
-    heading.find( "th" ).slice( -2 ).prop( "width", "1%" );
+    heading.find( "th" ).slice( -4 ).prop( "width", "1%" );
+    heading.find( "th:nth-child(4)" ).prop( "width", "10%" );
 
     $( "#elementsTable" ).append( $( "<tbody>" ) );
 

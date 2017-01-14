@@ -1,7 +1,6 @@
 body
 {
     font-family: Helvetica;
-    font-size: 11px;
     cursor: default;
     font-size: 13px;
     font-family: sans-serif;
@@ -64,7 +63,6 @@ button
     font-size: inherit;
     margin-bottom: 0;
     margin-top: 2px;
-    min-width: 4em;
     padding: 3px 12px;
 }
 
@@ -136,6 +134,12 @@ h1
     margin-right: .15em;
 }
 
+#elementsTable button.reduceScope
+{
+    width: 100%;
+    font-size: 13px;
+}
+
 #elementsTable td.url
 {
     padding-left: 26px;
@@ -176,4 +180,9 @@ h1
 #importexport
 {
     width: 100%;
+}
+
+#controls button
+{
+    min-width: 4em;
 }
