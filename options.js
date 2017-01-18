@@ -16,6 +16,28 @@ function setIcon( cell, url )
     $( cell ).css( "background-image", "url(\'chrome://favicon/" + url + "\')" );
 }
 
+function serializeEntry( row )
+{
+    var entry = {};
+    $( this ).find( "input,select" ).map( function()
+    {
+        entry[ $( this ).prop( "name" ) ] = $( this ).prop( "value" );
+    });
+    return entry;
+}
+
+function serialize()
+{
+    var settings = [];
+
+    $( "#elementsTable tbody tr" ).map( function()
+    {
+        settings.push( serializeEntry( this ) );
+    });
+
+    return JSON.stringify( settings );
+}
+
 function addRow( entry )
 {
     function refreshIcon( field )
@@ -32,6 +54,14 @@ function addRow( entry )
         }
     }
 
+    function reduceScope( button )
+    {
+        var selectorField = $( button ).closest( "tr" ).find( "input[name='selector']" );
+        var selectorElements = selectorField.val().split( " > " );
+        selectorElements.pop();
+        selectorField.val( selectorElements.join( " > " ) );
+    }
+
     $( "#elementsTable tbody" )
         .append( $( "<tr>" )
             .append( $( "<td class='url'>" )
@@ -40,8 +70,7 @@ function addRow( entry )
             .append( $( "<td>" )
                 .append( $( "<input type='text' name='selector' value='" + entry.selector + "'>" ) ) )
             .append( $( "<td>" )
-                .append( $( "<button>" ).html( "-" ) )
-                .append( $( "<button>" ).html( "+" ) ) )
+                .append( $( "<button>" ).html( "Reduce" ).on( "click", function() { reduceScope( this ); }) ) )
             .append( $( "<td>" )
                 .append( $( "<input type='text' name='delay' value='" + entry.delay + "'>" ) ) )
             .append( $( "<td>" )
@@ -97,23 +126,6 @@ function loadURLs()
             addRow( entry );
         });
     }
-}
-
-function serialize()
-{
-    var settings = [];
-
-    $( "#elementsTable tbody tr" ).map( function()
-    {
-        var entry = {};
-        $( this ).find( "input,select" ).map( function()
-        {
-            entry[ $( this ).prop( "name" ) ] = $( this ).prop( "value" );
-        });
-        settings.push( entry );
-    });
-
-    return JSON.stringify( settings );
 }
 
 function settingsChanged()
