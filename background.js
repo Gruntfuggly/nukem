@@ -28,7 +28,6 @@ function setIcon( enabled )
 
 function setBadge( count )
 {
-    console.log( "set badge " + count );
     chrome.browserAction.setBadgeText( {
         text: ( count > 0 ) ? count.toString() : ""
     });
@@ -70,16 +69,22 @@ function toggleEnabled()
 
 function addSite( url, selector )
 {
-    var settingsData = window.localStorage.getItem( "settings" );
-    var settings = settingsData ? JSON.parse( settingsData ) : [];
+    chrome.storage.sync.get( "settings", function( stored )
+    {
+        var settings = stored === undefined ? [] : JSON.parse( stored.settings );
 
-    settings.push( {
-        url: url,
-        selector: selector,
-        delay: "0",
-        method: "Hide"
+        settings.push( {
+            url: url,
+            selector: selector,
+            delay: "0",
+            method: "Hide"
+        });
+
+        chrome.storage.sync.set( { settings: JSON.stringify( settings ) }, function()
+        {
+            console.log( "Failed to store settings: " + runtime.lastError );
+        });
     });
-    window.localStorage.setItem( "settings", JSON.stringify( settings ) );
 }
 
 function pageMatches( url, value )
@@ -95,22 +100,26 @@ function pageMatches( url, value )
     return matched;
 }
 
-function getElements( url )
+function getElements( url, callback )
 {
     var selectors = [];
 
-    var settingsData = window.localStorage.getItem( "settings" );
-    var settings = settingsData ? JSON.parse( settingsData ) : [];
-
-    settings.map( function( entry )
+    chrome.storage.sync.get( "settings", function( stored )
     {
-        if( pageMatches( url, entry.url ) )
-        {
-            selectors.push( entry );
-        }
-    });
+        var settings = stored === undefined ? [] : JSON.parse( stored.settings );
 
-    return selectors;
+        settings.map( function( entry )
+        {
+            if( pageMatches( url, entry.url ) )
+            {
+                selectors.push( entry );
+            }
+        });
+
+        callback( {
+            elements: selectors
+        });
+    });
 }
 
 chrome.browserAction.onClicked.addListener( toggleEnabled );
@@ -143,9 +152,7 @@ chrome.extension.onRequest.addListener(
         {
             elementsNuked = 0;
             setBadge( 0 );
-            sendResponse( {
-                elements: getElements( request.url )
-            });
+            getElements( request.url, sendResponse );
         }
         else if( request.method === "elementNuked" )
         {

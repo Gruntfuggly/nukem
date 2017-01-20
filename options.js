@@ -1,4 +1,4 @@
-var checked = false;
+var currentSettings = "";
 
 const defaultEntry = chrome.extension.getBackgroundPage().getDefaultEntry();
 
@@ -56,8 +56,6 @@ function addRow( entry )
 
 function loadURLs()
 {
-    checked = false;
-
     $( "#elementsTable" ).remove();
 
     var heading = $( "<tr>" )
@@ -75,20 +73,20 @@ function loadURLs()
 
     $( "#elementsTable" ).append( $( "<tbody>" ) );
 
-    var settingsData = window.localStorage.getItem( "settings" );
-    var settings = settingsData ? JSON.parse( settingsData ) : [];
-
-    if( settings.length === 0 )
+    chrome.storage.sync.get( "settings", function( stored )
     {
-        addRow( defaultEntry );
-    }
-    else
-    {
-        settings.map( function( entry )
+        if( stored.settings )
         {
-            addRow( entry );
-        });
-    }
+            JSON.parse( stored.settings ).map( function( entry )
+            {
+                addRow( entry );
+            });
+        }
+        if( $( "#elementsTable tbody tr" ).length === 0 )
+        {
+            addRow( defaultEntry );
+        }
+    });
 }
 
 function serialize()
@@ -102,7 +100,10 @@ function serialize()
         {
             entry[ $( this ).prop( "name" ) ] = $( this ).prop( "value" );
         });
-        settings.push( entry );
+        if( entry.url.trim() !== "" )
+        {
+            settings.push( entry );
+        }
     });
 
     return JSON.stringify( settings );
@@ -110,7 +111,7 @@ function serialize()
 
 function settingsChanged()
 {
-    return window.localStorage.getItem( "settings" ) !== serialize();
+    return currentSettings != serialize();
 }
 
 function save()
@@ -126,10 +127,20 @@ function save()
         return twoDigit( now.getHours() ) + ":" + twoDigit( now.getMinutes() ) + ":" + twoDigit( now.getSeconds() );
     }
 
-    window.localStorage.clear();
-    window.localStorage.setItem( "settings", serialize() );
+    var settings = serialize();
 
-    document.getElementById( 'saved' ).innerHTML = "<em><small>Last saved: " + now() + "</small></em>";
+    chrome.storage.sync.set( { settings: settings }, function()
+    {
+        if( chrome.runtime.lastError )
+        {
+            console.log( "Failed to store settings: " + chrome.runtime.lastError );
+        }
+        else
+        {
+            currentSettings = JSON.stringify( settings );
+            document.getElementById( 'saved' ).innerHTML = "<em><small>Last saved: " + now() + "</small></em>";
+        }
+    });
 }
 
 function cancel()
@@ -169,6 +180,11 @@ document.addEventListener( 'DOMContentLoaded', function()
 });
 
 document.addEventListener( 'visibilitychange', function()
+{
+    loadURLs();
+});
+
+chrome.storage.onChanged.addListener( function( changes, namespace )
 {
     loadURLs();
 });
