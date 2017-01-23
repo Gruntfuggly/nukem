@@ -154,6 +154,29 @@ function cancel()
     );
 }
 
+function exportEntries()
+{
+    $( "#importexport" ).remove();
+    $( "#options" ).append( $( "<textarea id='importexport' rows='5'>" ).html( serialize() ) );
+}
+
+function importEntries()
+{
+    var settings = $( "#importexport" ).val();
+    chrome.storage.sync.set( { settings: settings }, function()
+    {
+        if( chrome.runtime.lastError )
+        {
+            console.log( "Failed to store settings: " + chrome.runtime.lastError );
+        }
+        else
+        {
+            currentSettings = JSON.stringify( settings );
+        }
+    });
+    $( "#importexport" ).remove();
+}
+
 function closePage()
 {
     return settingsChanged() ? true : null;
@@ -165,17 +188,25 @@ document.addEventListener( 'DOMContentLoaded', function()
 {
     loadURLs();
 
-    document.querySelector( 'button#add-button' ).addEventListener( 'click', function()
+    document.querySelector( '#add-button' ).addEventListener( 'click', function()
     {
         addRow( defaultEntry );
     });
-    document.querySelector( 'button#save-button' ).addEventListener( 'click', function()
+    document.querySelector( '#save-button' ).addEventListener( 'click', function()
     {
         save();
     });
-    document.querySelector( 'button#close-button' ).addEventListener( 'click', function()
+    document.querySelector( '#close-button' ).addEventListener( 'click', function()
     {
         cancel();
+    });
+    document.querySelector( '#export-button' ).addEventListener( 'click', function()
+    {
+        exportEntries();
+    });
+    document.querySelector( '#import-button' ).addEventListener( 'click', function()
+    {
+        importEntries();
     });
 });
 
