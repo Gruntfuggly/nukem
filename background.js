@@ -71,7 +71,7 @@ function addSite( url, selector )
 {
     chrome.storage.sync.get( "settings", function( stored )
     {
-        var settings = stored === undefined ? [] : JSON.parse( stored.settings );
+        var settings = stored.settings === undefined ? [] : stored.settings;
 
         settings.push( {
             url: url,
@@ -80,7 +80,7 @@ function addSite( url, selector )
             method: "Hide"
         });
 
-        chrome.storage.sync.set( { settings: JSON.stringify( settings ) }, function()
+        chrome.storage.sync.set( { settings: settings }, function()
         {
             console.log( "Failed to store settings: " + runtime.lastError );
         });
@@ -106,7 +106,7 @@ function getElements( url, callback )
 
     chrome.storage.sync.get( "settings", function( stored )
     {
-        var settings = stored === undefined ? [] : JSON.parse( stored.settings );
+        var settings = stored.settings === undefined ? [] : stored.settings;
 
         settings.map( function( entry )
         {

@@ -75,17 +75,19 @@ function loadURLs()
 
     chrome.storage.sync.get( "settings", function( stored )
     {
-        if( stored.settings )
+        var settings = stored.settings === undefined ? [] : stored.settings;
+
+        settings.map( function( entry )
         {
-            JSON.parse( stored.settings ).map( function( entry )
-            {
-                addRow( entry );
-            });
-        }
+            addRow( entry );
+        });
+
         if( $( "#elementsTable tbody tr" ).length === 0 )
         {
             addRow( defaultEntry );
         }
+
+        currentSettings = JSON.stringify( settings, Object.keys( settings ).sort() );
     });
 }
 
@@ -106,12 +108,13 @@ function serialize()
         }
     });
 
-    return JSON.stringify( settings );
+    return settings;
 }
 
 function settingsChanged()
 {
-    return currentSettings != serialize();
+    var serialized = serialize();
+    return currentSettings != JSON.stringify( serialized, Object.keys( serialized ).sort() );
 }
 
 function save()
@@ -157,24 +160,28 @@ function cancel()
 function exportEntries()
 {
     $( "#importexport" ).remove();
-    $( "#options" ).append( $( "<textarea id='importexport' rows='5'>" ).html( serialize() ) );
+    $( "#options" ).append( $( "<textarea id='importexport' rows='5'>" ).html( JSON.stringify( serialize() ) ) );
 }
 
 function importEntries()
 {
-    var settings = $( "#importexport" ).val();
-    chrome.storage.sync.set( { settings: settings }, function()
+    try
     {
-        if( chrome.runtime.lastError )
+        var settings = JSON.parse( $( "#importexport" ).val().replace( /\n|\r/g, "" ) );
+
+        chrome.storage.sync.set( { settings: settings }, function()
         {
-            console.log( "Failed to store settings: " + chrome.runtime.lastError );
-        }
-        else
-        {
-            currentSettings = JSON.stringify( settings );
-        }
-    });
-    $( "#importexport" ).remove();
+            if( chrome.runtime.lastError )
+            {
+                console.log( "Failed to store settings: " + chrome.runtime.lastError );
+            }
+        });
+        $( "#importexport" ).remove();
+    }
+    catch( e )
+    {
+        alert( "Failed to parse: " + e );
+    }
 }
 
 function closePage()
