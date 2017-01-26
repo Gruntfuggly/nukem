@@ -1,4 +1,4 @@
-var currentSettings = "";
+var storedSettings = [];
 
 const defaultEntry = chrome.extension.getBackgroundPage().getDefaultEntry();
 
@@ -87,7 +87,7 @@ function loadURLs()
             addRow( defaultEntry );
         }
 
-        currentSettings = JSON.stringify( settings, Object.keys( settings ).sort() );
+        storedSettings = settings;
     });
 }
 
@@ -109,12 +109,6 @@ function serialize()
     });
 
     return settings;
-}
-
-function settingsChanged()
-{
-    var serialized = serialize();
-    return currentSettings != JSON.stringify( serialized, Object.keys( serialized ).sort() );
 }
 
 function save()
@@ -140,7 +134,7 @@ function save()
         }
         else
         {
-            currentSettings = JSON.stringify( settings );
+            storedSettings = settings;
             document.getElementById( 'saved' ).innerHTML = "<em><small>Last saved: " + now() + "</small></em>";
         }
     });
@@ -186,6 +180,19 @@ function importEntries()
 
 function closePage()
 {
+    function settingsChanged()
+    {
+        var settings = serialize();
+        var changed = storedSettings.length !== settings.length;
+        if( !changed )
+        {
+            changed = storedSettings.some( function( entry, index )
+            {
+                return JSON.stringify( entry, Object.keys( entry ).sort() ) !== JSON.stringify( settings[ index ], Object.keys( settings[ index ] ).sort() );
+            });
+        }
+        return changed;
+    }
     return settingsChanged() ? true : null;
 }
 
