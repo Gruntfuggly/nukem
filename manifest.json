@@ -3,7 +3,7 @@
     "name": "Nukem",
     "short_name": "Nukem",
     "description": "Remove elements from web pages permanently",
-    "version": "0.4",
+    "version": "0.6",
     "author": "Gruntfuggly",
     "permissions": [
         "chrome://favicon/",
