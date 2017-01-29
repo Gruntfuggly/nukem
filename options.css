@@ -1,3 +1,8 @@
+html
+{
+    height: 100%;
+}
+
 body
 {
     font-family: Helvetica;
@@ -22,11 +27,16 @@ td
     position: absolute;
     left: 200px;
     top: 0;
-    bottom: 0;
+    bottom: 4em;
     right: 0;
     padding: 0 25px;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.section
+{
+    height: 100%;
 }
 
 .background
@@ -117,8 +127,16 @@ h1
 #content
 {
     clear: both;
-    height: 240px;
     position: relative;
+    height: 100%;
+}
+
+.controls
+{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: .55rem;
 }
 
 #elementsTable
@@ -126,6 +144,11 @@ h1
     width: 100%;
     margin: .25rem 0;
     padding: 0 .25rem;
+}
+
+#elementsTable tbody
+{
+    overflow-y: auto;
 }
 
 #elementsTable button

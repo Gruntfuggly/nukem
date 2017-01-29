@@ -63,7 +63,7 @@ function addRow( entry )
 
     if( entry.url === "" )
     {
-        $( "#elementsTable tr:last input.url" ).focus();
+        $( "#elementsTable tr:last input[name='url']" ).focus();
     }
 }
 
@@ -218,6 +218,7 @@ document.addEventListener( 'DOMContentLoaded', function()
     document.querySelector( '#add-button' ).addEventListener( 'click', function()
     {
         addRow( defaultEntry );
+        $( ".options" ).scrollTop( $( ".options" )[ 0 ].scrollHeight );
     });
     document.querySelector( '#save-button' ).addEventListener( 'click', function()
     {
@@ -227,14 +228,14 @@ document.addEventListener( 'DOMContentLoaded', function()
     {
         cancel();
     });
-    document.querySelector( '#export-button' ).addEventListener( 'click', function()
-    {
-        exportEntries();
-    });
-    document.querySelector( '#import-button' ).addEventListener( 'click', function()
-    {
-        importEntries();
-    });
+    // document.querySelector( '#export-button' ).addEventListener( 'click', function()
+    // {
+    //     exportEntries();
+    // });
+    // document.querySelector( '#import-button' ).addEventListener( 'click', function()
+    // {
+    //     importEntries();
+    // });
 });
 
 document.addEventListener( 'visibilitychange', function()
